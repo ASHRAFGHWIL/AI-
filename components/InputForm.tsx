@@ -1,7 +1,7 @@
 
 import React, { useState, useMemo } from 'react';
 import type { MarketingInput } from '../types';
-import { PLATFORMS, CTA_STYLES } from '../constants';
+import { PLATFORMS, CTA_STYLES, CONTENT_STYLES, TARGET_AUDIENCES } from '../constants';
 import { useI18n } from '../hooks/useI18n';
 
 interface InputFormProps {
@@ -81,8 +81,16 @@ const InputForm: React.FC<InputFormProps> = ({ initialData, onSubmit, isLoading 
     <form onSubmit={handleSubmit} className="space-y-8">
       <Fieldset legend={t('inputForm.coreDetails')}>
         <Input label={t('inputForm.niche')} name="niche" value={formData.niche} onChange={handleChange} placeholder="e.g., eco-friendly wooden lamps" />
-        <Input label={t('inputForm.audience')} name="audience" value={formData.audience} onChange={handleChange} placeholder="e.g., US, Europe, or specific countries" />
-        <Input label={t('inputForm.style')} name="style" value={formData.style} onChange={handleChange} placeholder="e.g., educational, entertaining, promotional" />
+        <Select label={t('inputForm.audience')} name="audience" value={formData.audience} onChange={handleChange}>
+            {TARGET_AUDIENCES.map(audience => (
+              <option key={audience} value={audience}>{t(`inputForm.targetAudiences.${audience}`)}</option>
+            ))}
+        </Select>
+        <Select label={t('inputForm.style')} name="style" value={formData.style} onChange={handleChange}>
+            {CONTENT_STYLES.map(style => (
+              <option key={style} value={style}>{t(`inputForm.contentStyles.${style}`)}</option>
+            ))}
+        </Select>
         <Select label={t('inputForm.ctaStyle')} name="cta_style" value={formData.cta_style} onChange={handleChange}>
             {CTA_STYLES.map(style => (
               <option key={style} value={style}>{t(`inputForm.ctaStyles.${style}`)}</option>

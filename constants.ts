@@ -10,6 +10,21 @@ export const PLATFORMS = [
   { name: "YouTubeShort", recommendedImageSize: '', recommendedVideoSize: '1080x1920 pixels', aspectRatioLabel: 'Portrait', guideline: 'Title up to 100 characters. Capture attention immediately with a strong hook and leverage trending audio for visibility.', characterLimit: 100, allows_links: true }
 ];
 
+export const CONTENT_STYLES = [
+    "Promotional",
+    "Entertaining",
+    "Educational",
+    "Storytelling"
+];
+
+export const TARGET_AUDIENCES = [
+    "US",
+    "European",
+    "Asian",
+    "South American",
+    "Australian"
+];
+
 export const CTA_STYLES = [
     "Direct",
     "Question",
@@ -22,8 +37,8 @@ export const CTA_STYLES = [
 
 export const INITIAL_FORM_DATA: MarketingInput = {
   niche: "eco-friendly wooden lamps",
-  audience: "US and Europe",
-  style: "Educational and promotional",
+  audience: TARGET_AUDIENCES[0],
+  style: CONTENT_STYLES[0],
   cta_style: CTA_STYLES[0],
   platforms: ["Instagram"],
   product_link: "",

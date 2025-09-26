@@ -19,7 +19,20 @@
         "coreDetails": "موجز المحتوى",
         "niche": "مجال العمل / الموضوع",
         "audience": "الجمهور المستهدف",
+        "targetAudiences": {
+            "US": "الولايات المتحدة الأمريكية",
+            "European": "أوروبي",
+            "Asian": "آسيوي",
+            "South American": "أمريكا الجنوبية",
+            "Australian": "أسترالي"
+        },
         "style": "أسلوب المحتوى",
+        "contentStyles": {
+            "Promotional": "ترويجي",
+            "Entertaining": "ترفيهي",
+            "Educational": "تعليمي",
+            "Storytelling": "قصصي"
+        },
         "ctaStyle": "أسلوب الدعوة لاتخاذ إجراء",
         "ctaStyles": {
             "Direct": "مباشر (مثال: تسوق الآن)",

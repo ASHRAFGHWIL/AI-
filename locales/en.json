@@ -19,7 +19,20 @@
         "coreDetails": "Content Brief",
         "niche": "Business Niche / Topic",
         "audience": "Target Audience",
+        "targetAudiences": {
+            "US": "US",
+            "European": "European",
+            "Asian": "Asian",
+            "South American": "South American",
+            "Australian": "Australian"
+        },
         "style": "Content Style",
+        "contentStyles": {
+            "Promotional": "Promotional",
+            "Entertaining": "Entertaining",
+            "Educational": "Educational",
+            "Storytelling": "Storytelling"
+        },
         "ctaStyle": "CTA Style",
         "ctaStyles": {
             "Direct": "Direct (e.g., Shop Now)",
