@@ -16,11 +16,11 @@ const OutputDisplay: React.FC<OutputDisplayProps> = ({ data }) => {
   }
 
   return (
-    <div className="bg-white p-4 sm:p-6 rounded-xl shadow-lg h-full border border-slate-200">
-        <h2 className="text-2xl font-bold mb-1 text-slate-900">{t('output.title')}</h2>
-        <p className="text-slate-600 mb-4">{t('common.product')}: <span className="font-semibold">{data.product}</span></p>
+    <div className="bg-white dark:bg-slate-800 p-4 sm:p-6 rounded-xl shadow-lg h-full border border-slate-200 dark:border-slate-700">
+        <h2 className="text-2xl font-bold mb-1 text-slate-900 dark:text-slate-100">{t('output.title')}</h2>
+        <p className="text-slate-600 dark:text-slate-400 mb-4">{t('common.product')}: <span className="font-semibold">{data.product}</span></p>
 
-      <div className="border-b border-slate-200">
+      <div className="border-b border-slate-200 dark:border-slate-700">
         <nav className="-mb-px flex space-x-4 rtl:space-x-reverse overflow-x-auto" aria-label="Tabs">
           {platforms.map((platform) => (
             <button
@@ -28,8 +28,8 @@ const OutputDisplay: React.FC<OutputDisplayProps> = ({ data }) => {
               onClick={() => setActiveTab(platform)}
               className={`${
                 activeTab === platform
-                  ? 'border-slate-500 text-slate-600'
-                  : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'
+                  ? 'border-sky-500 text-sky-600 dark:border-sky-400 dark:text-sky-400'
+                  : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300 dark:text-slate-400 dark:hover:text-slate-200 dark:hover:border-slate-500'
               } whitespace-nowrap py-3 px-1 border-b-2 font-medium text-sm transition-colors duration-200`}
             >
               {platform}
@@ -55,8 +55,8 @@ const OutputDisplay: React.FC<OutputDisplayProps> = ({ data }) => {
 const VariantCard: React.FC<{ variant: Variant, platform: string }> = ({ variant, platform }) => {
     const { t } = useI18n();
     return (
-        <div className="border border-slate-200 rounded-lg p-4 bg-slate-50/50">
-            <h3 className="font-bold text-lg text-slate-800 mb-3">{t('common.variant')} {variant.variant}</h3>
+        <div className="border border-slate-200 dark:border-slate-700 rounded-lg p-4 bg-slate-50/50 dark:bg-slate-900/50">
+            <h3 className="font-bold text-lg text-slate-800 dark:text-slate-200 mb-3">{t('common.variant')} {variant.variant}</h3>
             <div className="space-y-3 text-sm">
                 {variant.title && <InfoItem label={t('output.card.title')} content={variant.title} />}
                 <InfoItem label={t('output.card.caption')} content={variant.caption || variant.text || 'N/A'} isPreformatted={true} />
@@ -64,13 +64,13 @@ const VariantCard: React.FC<{ variant: Variant, platform: string }> = ({ variant
                 <InfoItem label={t('output.card.hashtags')} content={variant.hashtags.join(' ')} />
                 <InfoItem label={t('output.card.imageSuggestion')} content={variant.image_suggest} />
                 <InfoItem label={t('output.card.altText')} content={variant.alt_text} />
-                <hr className="my-2 border-slate-200"/>
-                <div className="bg-slate-100 p-3 rounded-md">
-                    <p className="font-semibold text-slate-600 mb-2 text-xs uppercase tracking-wider">{t('output.card.seoSnippet')}</p>
+                <hr className="my-2 border-slate-200 dark:border-slate-700"/>
+                <div className="bg-slate-100 dark:bg-slate-700/50 p-3 rounded-md">
+                    <p className="font-semibold text-slate-600 dark:text-slate-400 mb-2 text-xs uppercase tracking-wider">{t('output.card.seoSnippet')}</p>
                     <InfoItem label={t('output.card.metaTitle')} content={variant.meta_title} />
                     <InfoItem label={t('output.card.metaDesc')} content={variant.meta_description} />
                 </div>
-                 <hr className="my-2 border-slate-200"/>
+                 <hr className="my-2 border-slate-200 dark:border-slate-700"/>
                 {variant.first_comment && <InfoItem label={t('output.card.firstComment')} content={variant.first_comment} />}
                 <InfoItem label={t('output.card.postTiming')} content={variant.suggested_post_time} icon="time" />
                 <InfoItem label={t('output.card.lengthNote')} content={variant.length_limit_notes} icon="info"/>
@@ -90,7 +90,7 @@ const CopyButton: React.FC<{ textToCopy: string }> = ({ textToCopy }) => {
     };
 
     return (
-        <button onClick={handleCopy} title="Copy to clipboard" className="text-slate-400 hover:text-slate-600 transition-colors">
+        <button onClick={handleCopy} title="Copy to clipboard" className="text-slate-400 hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-300 transition-colors">
             {copied ? (
                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
@@ -106,12 +106,12 @@ const CopyButton: React.FC<{ textToCopy: string }> = ({ textToCopy }) => {
 
 const InfoItem: React.FC<{ label: string, content: string, isPreformatted?: boolean, icon?: 'info' | 'time' }> = ({ label, content, isPreformatted, icon }) => (
     <div className="grid grid-cols-1 md:grid-cols-[120px_1fr] gap-x-4 gap-y-1 items-start">
-        <span className="font-semibold text-slate-600 flex items-center gap-1.5">
+        <span className="font-semibold text-slate-600 dark:text-slate-400 flex items-center gap-1.5">
             {icon === 'time' && <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>}
             {icon === 'info' && <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>}
             {label}
         </span>
-        <div className="text-slate-800 flex items-start justify-between gap-2">
+        <div className="text-slate-800 dark:text-slate-200 flex items-start justify-between gap-2">
             {isPreformatted ? (
                 <p className="whitespace-pre-wrap flex-1">{content}</p>
             ) : (

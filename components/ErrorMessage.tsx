@@ -8,7 +8,7 @@ interface ErrorMessageProps {
 const ErrorMessage: React.FC<ErrorMessageProps> = ({ message }) => {
   const { t } = useI18n();
   return (
-    <div className="bg-red-50 border border-red-200 text-red-800 p-4 rounded-lg" role="alert">
+    <div className="bg-red-50 border border-red-200 text-red-800 p-4 rounded-lg dark:bg-red-900/20 dark:border-red-500/30 dark:text-red-400" role="alert">
       <div className="flex">
         <div className="flex-shrink-0">
           <svg className="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
