@@ -1,0 +1,55 @@
+{
+    "common": {
+        "product": "المنتج",
+        "variant": "النسخة",
+        "generate": "إنشاء المنشورات",
+        "generating": "جاري الإنشاء...",
+        "errorTitle": "حدث خطأ"
+    },
+    "header": {
+        "title": "مولّد منشورات السوشيال ميديا بالذكاء الاصطناعي",
+        "description": "أنشئ منشورات تسويقية احترافية ومُحسّنة لمحركات البحث لجميع منصات التواصل الاجتماعي. املأ النموذج أدناه لإنشاء حزمة محتوى كاملة مع متغيرات لاختبار A/B."
+    },
+    "app": {
+        "outputPlaceholderTitle": "ستظهر النتائج هنا",
+        "outputPlaceholderDescription": "املأ النموذج واضغط على \"إنشاء\" لمشاهدة السحر."
+    },
+    "inputForm": {
+        "productDetails": "تفاصيل المنتج",
+        "productName": "اسم المنتج",
+        "shortDescription": "وصف قصير",
+        "longDescription": "وصف طويل",
+        "mainKeywords": "الكلمات المفتاحية الرئيسية (مفصولة بفاصلة)",
+        "targetingTone": "الاستهداف والنبرة",
+        "targetAudience": "الجمهور المستهدف",
+        "toneOfVoice": "نبرة الصوت",
+        "language": "اللغة",
+        "primaryCta": "الدعوة الأساسية لاتخاذ إجراء (CTA)",
+        "secondaryCta": "الدعوة الثانوية لاتخاذ إجراء (CTA)",
+        "platforms": "المنصات",
+        "brandSeo": "إرشادات العلامة التجارية والسيو",
+        "maxHashtags": "الحد الأقصى للهاشتاجات",
+        "preferredTitleLength": "طول العنوان المفضل",
+        "preferredDescLength": "طول الوصف المفضل",
+        "emojisAllowed": "السماح بالرموز التعبيرية",
+        "wordsToAvoid": "كلمات يجب تجنبها (مفصولة بفاصلة)"
+    },
+    "output": {
+        "title": "المحتوى الذي تم إنشاؤه",
+        "noPlatforms": "لم يتم اختيار أو إنشاء أي منصات.",
+        "card": {
+            "title": "العنوان",
+            "caption": "التسمية التوضيحية",
+            "videoScript": "سيناريو فيديو 15 ثانية",
+            "hashtags": "الهاشتاجات",
+            "imageSuggestion": "اقتراح الصورة",
+            "altText": "النص البديل",
+            "seoSnippet": "مقتطف السيو",
+            "metaTitle": "عنوان ميتا",
+            "metaDesc": "وصف ميتا",
+            "firstComment": "التعليق الأول المقترح",
+            "postTiming": "توقيت النشر",
+            "lengthNote": "ملاحظة الطول"
+        }
+    }
+}

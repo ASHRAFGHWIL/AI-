@@ -1,0 +1,5 @@
+{
+  "name": "AI Social Media Post Generator",
+  "description": "An advanced AI-powered assistant to generate professional, SEO-friendly marketing posts for various social media platforms. It takes product details and generates a complete content package with multiple variations for A/B testing.",
+  "requestFramePermissions": []
+}

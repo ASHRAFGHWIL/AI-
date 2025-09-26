@@ -1,0 +1,55 @@
+{
+    "common": {
+        "product": "Product",
+        "variant": "Variant",
+        "generate": "Generate Posts",
+        "generating": "Generating...",
+        "errorTitle": "An error occurred"
+    },
+    "header": {
+        "title": "AI Social Media Post Generator",
+        "description": "Generate professional, SEO-friendly marketing posts for all your social media platforms. Fill out the form below to create a complete content package with A/B testing variations."
+    },
+    "app": {
+        "outputPlaceholderTitle": "Output will appear here",
+        "outputPlaceholderDescription": "Fill in the form and click \"Generate\" to see the magic happen."
+    },
+    "inputForm": {
+        "productDetails": "Product Details",
+        "productName": "Product Name",
+        "shortDescription": "Short Description",
+        "longDescription": "Long Description",
+        "mainKeywords": "Main Keywords (comma-separated)",
+        "targetingTone": "Targeting & Tone",
+        "targetAudience": "Target Audience",
+        "toneOfVoice": "Tone of Voice",
+        "language": "Language",
+        "primaryCta": "Primary Call to Action",
+        "secondaryCta": "Secondary Call to Action",
+        "platforms": "Platforms",
+        "brandSeo": "Brand & SEO Guidelines",
+        "maxHashtags": "Max Hashtags",
+        "preferredTitleLength": "Preferred Title Length",
+        "preferredDescLength": "Preferred Desc. Length",
+        "emojisAllowed": "Emojis Allowed",
+        "wordsToAvoid": "Words to Avoid (comma-separated)"
+    },
+    "output": {
+        "title": "Generated Content",
+        "noPlatforms": "No platforms were selected or generated.",
+        "card": {
+            "title": "Title",
+            "caption": "Caption",
+            "videoScript": "15s Video Script",
+            "hashtags": "Hashtags",
+            "imageSuggestion": "Image Suggestion",
+            "altText": "Alt Text",
+            "seoSnippet": "SEO Snippet",
+            "metaTitle": "Meta Title",
+            "metaDesc": "Meta Desc",
+            "firstComment": "Suggested First Comment",
+            "postTiming": "Post Timing",
+            "lengthNote": "Length Note"
+        }
+    }
+}
