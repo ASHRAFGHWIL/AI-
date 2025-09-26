@@ -15,7 +15,9 @@ export const CTA_STYLES = [
     "Question",
     "Benefit-driven",
     "Urgency",
-    "Soft"
+    "Soft",
+    "Teaser",
+    "Community"
 ];
 
 export const INITIAL_FORM_DATA: MarketingInput = {
