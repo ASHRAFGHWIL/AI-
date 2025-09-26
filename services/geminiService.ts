@@ -1,6 +1,5 @@
-
-import { GoogleGenAI, Type } from "@google/genai";
-import type { MarketingInput, MarketingOutput } from '../types';
+import { GoogleGenAI } from "@google/genai";
+import type { MarketingInput, MarketingOutput, GroundingSource } from '../types';
 
 if (!process.env.API_KEY) {
     throw new Error("API_KEY environment variable not set");
@@ -9,99 +8,85 @@ if (!process.env.API_KEY) {
 const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
 const PROMPT_INSTRUCTIONS = `
-أنت مساعد ذكاء اصطناعي متقدم موجه لإنشاء منشورات تسويقية احترافية وصديقة لمحركات البحث (SEO) لمختلف منصات السوشال ميديا. مهمتك: استقبال مدخلات عن منتج/خدمة/حملة ثم إنتاج حزمة محتوى متكاملة معدّة للنشر لكل منصة محددة.
+You are a professional content generation assistant specialized in SEO-driven marketing content. You create fully optimized, engaging, and professional posts for all social media platforms (Facebook, Instagram, TikTok, Pinterest, YouTube, LinkedIn, X).
 
-قواعد خروج المحتوى:
-1. لكل منصة طلّع 3 متغيرات (A / B / C).
-2. ضع أهم الكلمات المفتاحية في أول 1-3 كلمات في العناوين والوصف حيثما أمكن دون إفساد القراءة.
-3. لكل منشور أدرج:
-   - title (إذا المنصة بتدعم عنوان)
-   - caption/text (بطول مناسب)
-   - 5-12 هاشتاج (باللغة المطلوبة) مع تبرير سريع لاختيارهم
-   - image_suggest: 1-2 جملة تصف الصورة المثالية + alt_text ≤ 125 حرف
-   - seo_snippet: meta title و meta description مناسبين للـ SEO
-   - length_limit_notes: تحذير عن طول النص المسموح للمنصة
-   - suggested_post_time: (اقتراح عام حسب الـ target_audience — الصباح/المساء/ويكند)
-   - CTA داخل النص ومقترحات للـ first comment (إن وُجدت)
-4. لمنصات الفيديو (TikTok/YouTubeShort)، قدم نسخة مُختصرة للإعلانات مدتها 15 ثانية (نص لفيديو قصير) مع hook أول 3 ثواني قوي.
-5. كل إخراج لازم يبقى بصيغة JSON قابلة للمعالجة آليًا تمامًا حسب الـ schema المحدد.
+Your Task:
+1. Based on the user's input (niche, audience, style, platforms), research and integrate the most searched keywords in the US and European markets related to the provided niche.
+2. Generate SEO-friendly content using these keywords naturally.
+3. Adapt the content format automatically to fit each chosen platform.
+4. For each platform selected by the user, generate 3-5 variations.
+5. If images are provided for specific platforms, analyze them and generate content that is highly relevant to the provided visuals.
+
+Content for each variation MUST include:
+- A strong hook at the beginning.
+- A value-driven body (educational, emotional, or promotional).
+- A clear call-to-action (CTA) tailored to the platform. If a 'product_link' is provided in the input, incorporate it into the CTA for platforms that support links.
+- Relevant trending hashtags/keywords for reach. If 'custom_hashtags' are provided in the input, you MUST include them along with the ones you generate.
+
+Output Format Rules:
+- Use Markdown for structuring the entire output.
+- Start with a top-level heading for each platform (e.g., '## Instagram').
+- Use a sub-heading for each variation (e.g., '### Variation 1').
+- Use bold markdown for labels (e.g., '**Hook:**', '**Body:**', '**CTA:**', '**Hashtags:**').
+- DO NOT output JSON.
 `;
-
-const variantSchema = {
-    type: Type.OBJECT,
-    properties: {
-        variant: { type: Type.STRING, enum: ['A', 'B', 'C'] },
-        title: { type: Type.STRING, nullable: true, description: "Only for platforms that support it like Pinterest/LinkedIn." },
-        caption: { type: Type.STRING, nullable: true, description: "The main post body/text. Use 'text' for platforms like X." },
-        text: { type: Type.STRING, nullable: true, description: "Use for platforms like X (Twitter)." },
-        hashtags: { type: Type.ARRAY, items: { type: Type.STRING } },
-        hashtag_reasoning: { type: Type.STRING },
-        image_suggest: { type: Type.STRING },
-        alt_text: { type: Type.STRING },
-        meta_title: { type: Type.STRING },
-        meta_description: { type: Type.STRING },
-        cta: { type: Type.STRING },
-        first_comment: { type: Type.STRING, nullable: true },
-        length_limit_notes: { type: Type.STRING },
-        suggested_post_time: { type: Type.STRING },
-        video_script_15s: { type: Type.STRING, nullable: true, description: "Only for video platforms like TikTok and YouTubeShort." },
-    },
-    required: [
-        'variant', 'hashtags', 'hashtag_reasoning', 'image_suggest', 'alt_text', 
-        'meta_title', 'meta_description', 'cta', 'length_limit_notes', 'suggested_post_time'
-    ]
-};
-
-const responseSchema = {
-  type: Type.OBJECT,
-  properties: {
-    product: { type: Type.STRING },
-    platforms: {
-      type: Type.OBJECT,
-      description: "An object where keys are platform names (e.g., 'Instagram', 'TikTok') and values are arrays of variants.",
-      properties: {
-        Instagram: { type: Type.ARRAY, items: variantSchema, nullable: true },
-        Facebook: { type: Type.ARRAY, items: variantSchema, nullable: true },
-        X: { type: Type.ARRAY, items: variantSchema, nullable: true },
-        LinkedIn: { type: Type.ARRAY, items: variantSchema, nullable: true },
-        TikTok: { type: Type.ARRAY, items: variantSchema, nullable: true },
-        Pinterest: { type: Type.ARRAY, items: variantSchema, nullable: true },
-        YouTubeShort: { type: Type.ARRAY, items: variantSchema, nullable: true },
-      }
-    }
-  },
-  required: ['product', 'platforms']
-};
 
 
 export const generateSocialPosts = async (input: MarketingInput): Promise<MarketingOutput> => {
   const model = 'gemini-2.5-flash';
-  const fullPrompt = `${PROMPT_INSTRUCTIONS}\n\nHere is the input data:\n${JSON.stringify(input, null, 2)}`;
+  
+  const inputForPrompt = { ...input };
+  if (inputForPrompt.platform_images && Object.keys(inputForPrompt.platform_images).length > 0) {
+      inputForPrompt.platform_images = Object.fromEntries(
+          Object.keys(inputForPrompt.platform_images).map(key => [key, 'Image Attached'])
+      );
+  } else {
+    delete inputForPrompt.platform_images;
+  }
+
+  const fullPrompt = `${PROMPT_INSTRUCTIONS}\n\nUser Input:\n${JSON.stringify(inputForPrompt, null, 2)}`;
 
   try {
+    const textPart = { text: fullPrompt };
+
+    const imageParts = Object.values(input.platform_images || {}).map(dataUrl => {
+        const [meta, base64Data] = (dataUrl || '').split(',');
+        if (!base64Data) return null;
+        
+        const mimeType = meta.match(/:(.*?);/)?.[1] || 'image/jpeg';
+        return {
+            inlineData: {
+                mimeType,
+                data: base64Data,
+            },
+        };
+    }).filter((p): p is { inlineData: { mimeType: string; data: string } } => p !== null);
+
+    const parts = [textPart, ...imageParts];
+
     const response = await ai.models.generateContent({
         model: model,
-        contents: fullPrompt,
+        contents: { parts: parts },
         config: {
-            responseMimeType: "application/json",
-            responseSchema: responseSchema,
-            temperature: 0.2,
+          tools: [{googleSearch: {}}],
+          temperature: 0.3,
         },
     });
 
     const responseText = response.text.trim();
-    const parsedJson = JSON.parse(responseText);
     
-    // Gemini sometimes returns an object with just the platform keys.
-    // We need to ensure the top-level structure is always correct.
-    if (!parsedJson.product || !parsedJson.platforms) {
-        return {
-            product: input.product_name,
-            platforms: parsedJson,
-        }
-    }
+    const rawSources = response.candidates?.[0]?.groundingMetadata?.groundingChunks ?? [];
+    const sources: GroundingSource[] = rawSources
+      .map((chunk: any) => ({
+        uri: chunk.web?.uri,
+        title: chunk.web?.title,
+      }))
+      .filter((source: GroundingSource) => source.uri && source.title);
 
-    return parsedJson as MarketingOutput;
+    return {
+      content: responseText,
+      sources: sources,
+    };
 
   } catch (error) {
     console.error("Error generating content from Gemini API:", error);

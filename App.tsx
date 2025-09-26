@@ -1,3 +1,4 @@
+
 import React, { useState, useCallback, useEffect } from 'react';
 import type { MarketingInput, MarketingOutput } from './types';
 import { generateSocialPosts } from './services/geminiService';
@@ -13,17 +14,11 @@ const App: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [output, setOutput] = useState<MarketingOutput | null>(null);
-  const { t, setLocale, locale } = useI18n();
+  const { t, locale } = useI18n();
 
   useEffect(() => {
     document.documentElement.lang = locale;
     document.documentElement.dir = locale === 'ar' ? 'rtl' : 'ltr';
-    // Update form language based on UI language
-    const formLang = document.querySelector('select[name="language"]') as HTMLSelectElement;
-    if(formLang) {
-        formLang.value = locale === 'ar' ? 'ar-EG' : 'en-US';
-    }
-
   }, [locale]);
 
 

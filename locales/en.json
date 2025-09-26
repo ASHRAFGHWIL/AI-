@@ -1,55 +1,34 @@
+
 {
     "common": {
         "product": "Product",
         "variant": "Variant",
-        "generate": "Generate Posts",
+        "generate": "Generate Content",
         "generating": "Generating...",
         "errorTitle": "An error occurred"
     },
     "header": {
-        "title": "AI Social Media Post Generator",
-        "description": "Generate professional, SEO-friendly marketing posts for all your social media platforms. Fill out the form below to create a complete content package with A/B testing variations."
+        "title": "AI Content Generation Assistant",
+        "description": "A professional assistant for SEO-driven marketing content. Provide your niche, audience, and style to generate optimized posts for all major social media platforms."
     },
     "app": {
-        "outputPlaceholderTitle": "Output will appear here",
-        "outputPlaceholderDescription": "Fill in the form and click \"Generate\" to see the magic happen."
+        "outputPlaceholderTitle": "Generated content will appear here",
+        "outputPlaceholderDescription": "Fill in the details and click \"Generate\" to create your posts."
     },
     "inputForm": {
-        "productDetails": "Product Details",
-        "productName": "Product Name",
-        "shortDescription": "Short Description",
-        "longDescription": "Long Description",
-        "mainKeywords": "Main Keywords (comma-separated)",
-        "targetingTone": "Targeting & Tone",
-        "targetAudience": "Target Audience",
-        "toneOfVoice": "Tone of Voice",
-        "language": "Language",
-        "primaryCta": "Primary Call to Action",
-        "secondaryCta": "Secondary Call to Action",
+        "coreDetails": "Content Brief",
+        "niche": "Business Niche / Topic",
+        "audience": "Target Audience",
+        "style": "Content Style",
         "platforms": "Platforms",
-        "brandSeo": "Brand & SEO Guidelines",
-        "maxHashtags": "Max Hashtags",
-        "preferredTitleLength": "Preferred Title Length",
-        "preferredDescLength": "Preferred Desc. Length",
-        "emojisAllowed": "Emojis Allowed",
-        "wordsToAvoid": "Words to Avoid (comma-separated)"
+        "productLink": "Product Link (Optional)",
+        "productLinkHint": "A link will be included for platforms that support it.",
+        "customHashtags": "Custom Hashtags (Optional)",
+        "customHashtagsHint": "Add your own brand or campaign hashtags, separated by spaces."
     },
     "output": {
         "title": "Generated Content",
-        "noPlatforms": "No platforms were selected or generated.",
-        "card": {
-            "title": "Title",
-            "caption": "Caption",
-            "videoScript": "15s Video Script",
-            "hashtags": "Hashtags",
-            "imageSuggestion": "Image Suggestion",
-            "altText": "Alt Text",
-            "seoSnippet": "SEO Snippet",
-            "metaTitle": "Meta Title",
-            "metaDesc": "Meta Desc",
-            "firstComment": "Suggested First Comment",
-            "postTiming": "Post Timing",
-            "lengthNote": "Length Note"
-        }
+        "sourcesTitle": "Sources",
+        "noPlatforms": "No platforms were selected or generated."
     }
 }

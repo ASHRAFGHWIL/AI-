@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useI18n } from '../hooks/useI18n';
 import { useTheme } from '../hooks/useTheme';
@@ -56,7 +57,7 @@ const Header: React.FC = () => {
       <div className="absolute top-0 end-0">
           <ThemeSwitcher />
       </div>
-      <h1 className="text-4xl md:text-5xl font-extrabold text-slate-900 dark:text-slate-100 tracking-tight">
+      <h1 className="text-4xl md:text-5xl font-extrabold text-red-700 dark:text-red-400 tracking-tight">
         {t('header.title')}
       </h1>
       <p className="mt-4 text-lg text-slate-600 dark:text-slate-400 max-w-3xl mx-auto">

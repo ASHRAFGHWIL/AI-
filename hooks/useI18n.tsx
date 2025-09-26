@@ -18,7 +18,7 @@ interface I18nContextType {
 const I18nContext = createContext<I18nContextType | undefined>(undefined);
 
 export const I18nProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [locale, setLocale] = useState<Locale>('ar'); // Default to Arabic
+  const [locale, setLocale] = useState<Locale>('en'); // Default to English
   const [translations, setTranslations] = useState<AllTranslations | null>(null);
   const [isLoaded, setIsLoaded] = useState(false);
 
