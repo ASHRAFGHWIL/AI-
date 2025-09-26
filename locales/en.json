@@ -32,11 +32,15 @@
         "productLink": "Product Link (Optional)",
         "productLinkHint": "A link will be included for platforms that support it.",
         "customHashtags": "Custom Hashtags (Optional)",
-        "customHashtagsHint": "Add your own brand or campaign hashtags, separated by spaces."
+        "customHashtagsHint": "Add your own brand or campaign hashtags, separated by spaces.",
+        "uploadImage": "Upload Image",
+        "removeImage": "Remove"
     },
     "output": {
         "title": "Generated Content",
         "sourcesTitle": "Sources",
-        "noPlatforms": "No platforms were selected or generated."
+        "noPlatforms": "No platforms were selected or generated.",
+        "copyAll": "Copy All",
+        "copied": "Copied!"
     }
 }

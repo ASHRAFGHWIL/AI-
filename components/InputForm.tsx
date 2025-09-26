@@ -1,3 +1,4 @@
+
 import React, { useState, useMemo } from 'react';
 import type { MarketingInput } from '../types';
 import { PLATFORMS, CTA_STYLES } from '../constants';
@@ -121,7 +122,7 @@ const InputForm: React.FC<InputFormProps> = ({ initialData, onSubmit, isLoading 
                               {imageData ? (
                                   <div className="flex items-center gap-3">
                                       <img src={imageData} alt={`${platform.name} preview`} className="w-12 h-12 object-cover rounded-md border-2 border-slate-300 dark:border-slate-600" />
-                                      <button type="button" onClick={() => removeImage(platform.name)} className="text-xs text-red-600 hover:text-red-800 dark:text-red-500 dark:hover:text-red-400 font-medium">Remove</button>
+                                      <button type="button" onClick={() => removeImage(platform.name)} className="text-xs text-red-600 hover:text-red-800 dark:text-red-500 dark:hover:text-red-400 font-medium">{t('inputForm.removeImage')}</button>
                                   </div>
                               ) : (
                                   <label className="cursor-pointer">
@@ -129,7 +130,7 @@ const InputForm: React.FC<InputFormProps> = ({ initialData, onSubmit, isLoading 
                                           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 me-2">
                                               <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5" />
                                           </svg>
-                                          Upload Image
+                                          {t('inputForm.uploadImage')}
                                       </div>
                                       <input type="file" accept="image/*" className="hidden" onChange={(e) => handleImageChange(e, platform.name)} />
                                   </label>
