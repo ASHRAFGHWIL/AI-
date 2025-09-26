@@ -33,18 +33,21 @@ export const I18nProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             ]);
 
             if (!enResponse.ok || !arResponse.ok) {
-                throw new Error(`Failed to load translation files. Status: ${enResponse.status}, ${arResponse.status}`);
+                console.warn(`Failed to load translation files. Status: ${enResponse.status}, ${arResponse.status}`);
             }
 
-            const enData = await enResponse.json();
-            const arData = await arResponse.json();
+            const enData = enResponse.ok ? await enResponse.json() : {};
+            const arData = arResponse.ok ? await arResponse.json() : {};
             
             setTranslations({ en: enData, ar: arData });
-            setIsLoaded(true);
 
         } catch(error) {
             console.error("Error fetching translations:", error);
-            // In a real app, you might want to set an error state and show a message
+            // On error, set empty translations so the t() function falls back to keys.
+            setTranslations({ en: {}, ar: {} });
+        } finally {
+            // This is crucial to ensure the app UI always renders, even if translations fail.
+            setIsLoaded(true);
         }
     };
 

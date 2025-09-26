@@ -73,7 +73,7 @@ export const generateSocialPosts = async (input: MarketingInput): Promise<Market
         },
     });
 
-    const responseText = response.text.trim();
+    const responseText = response?.text?.trim() ?? '';
     
     const rawSources = response.candidates?.[0]?.groundingMetadata?.groundingChunks ?? [];
     const sources: GroundingSource[] = rawSources

@@ -7,6 +7,105 @@ interface OutputDisplayProps {
   data: MarketingOutput;
 }
 
+// This component parses the raw markdown-like text from the AI and renders it as styled JSX.
+const ContentRenderer: React.FC<{ content: string }> = ({ content }) => {
+  // Anchored regexes to test if a string part IS a URL or a hashtag.
+  const urlTestRegex = /^(https?:\/\/[^\s()]+)$/;
+  const hashtagTestRegex = /^(#[\w-]+)$/;
+
+  // Regex to SPLIT the content string by URLs or hashtags.
+  // A single capturing group ensures delimiters are kept. This avoids nested
+  // capturing groups that cause .split() to return `undefined` elements.
+  const splitRegex = /(https?:\/\/[^\s()]+|#[\w-]+)/g;
+
+  // This function takes a string and returns an array of strings and styled components
+  const renderTextWithHighlights = (text: string) => {
+    // Guard against non-string input.
+    if (typeof text !== 'string') return null;
+
+    return text.split(splitRegex).map((part, index) => {
+      // A part can be an empty string from the split, which is valid.
+      // We only need to protect against calling methods on null/undefined.
+      if (!part) {
+        return part;
+      }
+
+      if (urlTestRegex.test(part)) {
+        return (
+          <a
+            key={index}
+            href={part}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-emerald-600 dark:text-emerald-400 hover:underline font-medium"
+          >
+            {part}
+          </a>
+        );
+      }
+      if (hashtagTestRegex.test(part)) {
+        return (
+          <span key={index} className="text-sky-600 dark:text-sky-400 font-medium">
+            {part}
+          </span>
+        );
+      }
+      return part;
+    });
+  };
+
+  // Process the entire content string line by line
+  const lines = content.split('\n').map((line, lineIndex) => {
+    // Render empty lines as spacing
+    if (line.trim() === '') {
+        return <div key={lineIndex} className="h-4" />;
+    }
+    // Render markdown headings
+    if (line.startsWith('## ')) {
+      return (
+        <h2 key={lineIndex} className="text-2xl font-bold mt-6 mb-2 text-slate-900 dark:text-slate-100">
+          {line.substring(3)}
+        </h2>
+      );
+    }
+    if (line.startsWith('### ')) {
+      return (
+        <h3 key={lineIndex} className="text-xl font-semibold mt-4 mb-1 text-slate-800 dark:text-slate-200">
+          {line.substring(4)}
+        </h3>
+      );
+    }
+    // Render bolded labels (e.g., **Hook:**) and apply special styling
+    const labelMatch = line.match(/^\*\*([\w\s]+):\*\*(.*)/);
+    if (labelMatch) {
+      const label = labelMatch[1];
+      const restOfLine = labelMatch[2].trim();
+      let contentNode;
+      // Apply special color for the CTA line
+      if (label.toLowerCase() === 'cta') {
+        contentNode = (
+          <span className="text-purple-600 dark:text-purple-400 font-semibold">
+            {renderTextWithHighlights(restOfLine)}
+          </span>
+        );
+      } else {
+        contentNode = renderTextWithHighlights(restOfLine);
+      }
+      return (
+        <div key={lineIndex} className="mt-1">
+          <strong className="font-bold text-slate-800 dark:text-slate-200">{label}:</strong>{' '}
+          {contentNode}
+        </div>
+      );
+    }
+    // Render regular paragraphs
+    return <p key={lineIndex}>{renderTextWithHighlights(line)}</p>;
+  });
+
+  return <>{lines}</>;
+};
+
+
 const OutputDisplay: React.FC<OutputDisplayProps> = ({ data }) => {
   const { t } = useI18n();
 
@@ -22,8 +121,8 @@ const OutputDisplay: React.FC<OutputDisplayProps> = ({ data }) => {
                 <div className="flex justify-end mb-2">
                     <CopyButton textToCopy={data.content} />
                 </div>
-                <div className="whitespace-pre-wrap text-slate-800 dark:text-slate-200 font-mono text-sm">
-                    {data.content}
+                <div className="text-slate-800 dark:text-slate-200 text-sm leading-relaxed">
+                    <ContentRenderer content={data.content} />
                 </div>
             </div>
 
