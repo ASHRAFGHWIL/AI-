@@ -20,7 +20,7 @@ Your Task:
 Content for each variation MUST include:
 - A strong hook at the beginning.
 - A value-driven body (educational, emotional, or promotional).
-- A clear call-to-action (CTA) tailored to the platform. If a 'product_link' is provided in the input, incorporate it into the CTA for platforms that support links.
+- A clear call-to-action (CTA) tailored to the platform AND the user's selected 'cta_style'. If a 'product_link' is provided in the input, incorporate it into the CTA for platforms that support links.
 - Relevant trending hashtags/keywords for reach. If 'custom_hashtags' are provided in the input, you MUST include them along with the ones you generate.
 
 Output Format Rules:

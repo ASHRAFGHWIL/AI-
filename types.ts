@@ -13,6 +13,7 @@ export interface MarketingInput {
   niche: string;
   audience: string;
   style: string;
+  cta_style: string;
   platforms: string[];
   product_link?: string;
   custom_hashtags?: string;

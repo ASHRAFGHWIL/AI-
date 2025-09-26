@@ -20,6 +20,14 @@
         "niche": "Business Niche / Topic",
         "audience": "Target Audience",
         "style": "Content Style",
+        "ctaStyle": "CTA Style",
+        "ctaStyles": {
+            "Direct": "Direct (e.g., Shop Now)",
+            "Question": "Question-based (e.g., Ready to upgrade?)",
+            "Benefit-driven": "Benefit-driven (e.g., Get glowing skin)",
+            "Urgency": "Urgency/FOMO (e.g., Don't miss out!)",
+            "Soft": "Soft/Engagement (e.g., Learn more)"
+        },
         "platforms": "Platforms",
         "productLink": "Product Link (Optional)",
         "productLinkHint": "A link will be included for platforms that support it.",

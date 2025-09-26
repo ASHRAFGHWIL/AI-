@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import type { MarketingInput } from '../types';
-import { PLATFORMS } from '../constants';
+import { PLATFORMS, CTA_STYLES } from '../constants';
 import { useI18n } from '../hooks/useI18n';
 
 interface InputFormProps {
@@ -82,6 +82,11 @@ const InputForm: React.FC<InputFormProps> = ({ initialData, onSubmit, isLoading 
         <Input label={t('inputForm.niche')} name="niche" value={formData.niche} onChange={handleChange} placeholder="e.g., eco-friendly wooden lamps" />
         <Input label={t('inputForm.audience')} name="audience" value={formData.audience} onChange={handleChange} placeholder="e.g., US, Europe, or specific countries" />
         <Input label={t('inputForm.style')} name="style" value={formData.style} onChange={handleChange} placeholder="e.g., educational, entertaining, promotional" />
+        <Select label={t('inputForm.ctaStyle')} name="cta_style" value={formData.cta_style} onChange={handleChange}>
+            {CTA_STYLES.map(style => (
+              <option key={style} value={style}>{t(`inputForm.ctaStyles.${style}`)}</option>
+            ))}
+        </Select>
         <div>
             <Input label={t('inputForm.productLink')} name="product_link" value={formData.product_link || ''} onChange={handleChange} placeholder="e.g., https://example.com/product" />
             {showLinkFieldHint && (
@@ -164,6 +169,16 @@ const Input: React.FC<React.InputHTMLAttributes<HTMLInputElement> & { label: str
         <input {...props} className="block w-full px-3 py-2 border border-slate-300 rounded-md shadow-sm placeholder-slate-400 focus:outline-none focus:ring-slate-500 focus:border-slate-500 sm:text-sm dark:bg-slate-800 dark:border-slate-600 dark:text-slate-200 dark:placeholder-slate-500 dark:focus:ring-sky-500 dark:focus:border-sky-500" />
     </div>
 );
+
+const Select: React.FC<React.SelectHTMLAttributes<HTMLSelectElement> & { label: string; children: React.ReactNode }> = ({ label, children, ...props }) => (
+    <div>
+        <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">{label}</label>
+        <select {...props} className="block w-full px-3 py-2 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-slate-500 focus:border-slate-500 sm:text-sm dark:bg-slate-800 dark:border-slate-600 dark:text-slate-200 dark:focus:ring-sky-500 dark:focus:border-sky-500">
+            {children}
+        </select>
+    </div>
+);
+
 
 const Checkbox: React.FC<React.InputHTMLAttributes<HTMLInputElement> & { label: string, description?: string }> = ({ label, description, ...props }) => (
     <div>
