@@ -44,6 +44,11 @@ export interface GroundingSource {
 }
 
 export interface MarketingOutput {
+  id: string;
   content: string;
   sources: GroundingSource[];
+}
+
+export interface SavedMarketingOutput extends MarketingOutput {
+    savedAt: string;
 }

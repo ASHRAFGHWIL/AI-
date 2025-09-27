@@ -96,6 +96,7 @@ export const generateSocialPosts = async (input: MarketingInput): Promise<Market
       .filter((source: GroundingSource) => source.uri && source.title);
 
     return {
+      id: Date.now().toString(),
       content: responseText,
       sources: sources,
     };

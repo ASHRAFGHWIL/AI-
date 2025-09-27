@@ -1,6 +1,6 @@
 
-import React, { useState, useCallback, useEffect } from 'react';
-import type { MarketingInput, MarketingOutput } from './types';
+import React, { useState, useCallback, useEffect, useMemo } from 'react';
+import type { MarketingInput, MarketingOutput, SavedMarketingOutput } from './types';
 import { generateSocialPosts } from './services/geminiService';
 import { INITIAL_FORM_DATA } from './constants';
 import Header from './components/Header';
@@ -9,17 +9,40 @@ import OutputDisplay from './components/OutputDisplay';
 import Loader from './components/Loader';
 import ErrorMessage from './components/ErrorMessage';
 import { useI18n } from './hooks/useI18n';
+import SavedPostsList from './components/SavedPostsList';
 
 const App: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [output, setOutput] = useState<MarketingOutput | null>(null);
+  const [savedPosts, setSavedPosts] = useState<SavedMarketingOutput[]>([]);
   const { t, locale } = useI18n();
 
   useEffect(() => {
     document.documentElement.lang = locale;
     document.documentElement.dir = locale === 'ar' ? 'rtl' : 'ltr';
   }, [locale]);
+
+  // Load saved posts from localStorage on initial render
+  useEffect(() => {
+    try {
+      const storedPosts = localStorage.getItem('savedPosts');
+      if (storedPosts) {
+        setSavedPosts(JSON.parse(storedPosts));
+      }
+    } catch (e) {
+      console.error("Failed to load saved posts from localStorage", e);
+    }
+  }, []);
+
+  // Persist saved posts to localStorage whenever they change
+  useEffect(() => {
+    try {
+      localStorage.setItem('savedPosts', JSON.stringify(savedPosts));
+    } catch (e) {
+      console.error("Failed to save posts to localStorage", e);
+    }
+  }, [savedPosts]);
 
 
   const handleSubmit = useCallback(async (formData: MarketingInput) => {
@@ -37,6 +60,31 @@ const App: React.FC = () => {
       setIsLoading(false);
     }
   }, []);
+  
+  const handleSavePost = useCallback((postToSave: MarketingOutput) => {
+    const newSavedPost: SavedMarketingOutput = {
+      ...postToSave,
+      savedAt: new Date().toISOString(),
+    };
+    setSavedPosts(prev => [newSavedPost, ...prev]);
+  }, []);
+
+  const handleDeletePost = useCallback((postId: string) => {
+      if (window.confirm(t('savedPosts.deleteConfirmation'))) {
+          setSavedPosts(prev => prev.filter(p => p.id !== postId));
+      }
+  }, [t]);
+
+  const handleViewPost = useCallback((postToView: SavedMarketingOutput) => {
+      setOutput(postToView);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
+  
+  const isCurrentOutputSaved = useMemo(() => {
+      if (!output) return false;
+      return savedPosts.some(p => p.id === output.id);
+  }, [output, savedPosts]);
+
 
   return (
     <div className="min-h-screen container mx-auto p-4 md:p-8 font-sans">
@@ -52,7 +100,13 @@ const App: React.FC = () => {
         <div className="mt-10 lg:mt-0 relative">
           {isLoading && <Loader />}
           {error && <ErrorMessage message={error} />}
-          {output && !isLoading && !error && <OutputDisplay data={output} />}
+          {output && !isLoading && !error && (
+            <OutputDisplay 
+                data={output} 
+                onSave={handleSavePost}
+                isSaved={isCurrentOutputSaved}
+            />
+          )}
           {!output && !isLoading && !error && (
              <div className="flex items-center justify-center h-full bg-slate-100 dark:bg-slate-800/50 rounded-xl border-2 border-dashed border-slate-300 dark:border-slate-700">
                 <div className="text-center p-8">
@@ -66,6 +120,13 @@ const App: React.FC = () => {
           )}
         </div>
       </main>
+      <div className="mt-12">
+        <SavedPostsList 
+          posts={savedPosts} 
+          onDelete={handleDeletePost} 
+          onView={handleViewPost} 
+        />
+      </div>
     </div>
   );
 };

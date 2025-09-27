@@ -70,6 +70,15 @@
         "sourcesTitle": "Sources",
         "noPlatforms": "No platforms were selected or generated.",
         "copyAll": "Copy All",
-        "copied": "Copied!"
+        "copied": "Copied!",
+        "save": "Save",
+        "saved": "Saved"
+    },
+    "savedPosts": {
+        "title": "Saved Content",
+        "empty": "You don't have any saved posts yet.",
+        "delete": "Delete",
+        "view": "View",
+        "deleteConfirmation": "Are you sure you want to delete this post? This action cannot be undone."
     }
 }

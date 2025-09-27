@@ -5,6 +5,8 @@ import { useI18n } from '../hooks/useI18n';
 
 interface OutputDisplayProps {
   data: MarketingOutput;
+  onSave: (data: MarketingOutput) => void;
+  isSaved: boolean;
 }
 
 // This component parses the raw markdown-like text from the AI and renders it as styled JSX.
@@ -106,7 +108,7 @@ const ContentRenderer: React.FC<{ content: string }> = ({ content }) => {
 };
 
 
-const OutputDisplay: React.FC<OutputDisplayProps> = ({ data }) => {
+const OutputDisplay: React.FC<OutputDisplayProps> = ({ data, onSave, isSaved }) => {
   const { t } = useI18n();
 
   return (
@@ -118,7 +120,8 @@ const OutputDisplay: React.FC<OutputDisplayProps> = ({ data }) => {
         <div className="flex-grow overflow-y-auto pe-2 space-y-6">
             {/* Main Content Display */}
             <div className="bg-slate-50 dark:bg-slate-900/50 rounded-lg p-4">
-                <div className="flex justify-end mb-2">
+                <div className="flex justify-end gap-2 mb-2">
+                    <SaveButton onClick={() => onSave(data)} isSaved={isSaved} />
                     <CopyButton textToCopy={data.content} />
                 </div>
                 <div className="text-slate-800 dark:text-slate-200 text-sm leading-relaxed">
@@ -150,6 +153,38 @@ const OutputDisplay: React.FC<OutputDisplayProps> = ({ data }) => {
     </div>
   );
 };
+
+const SaveButton: React.FC<{ onClick: () => void; isSaved: boolean; }> = ({ onClick, isSaved }) => {
+    const { t } = useI18n();
+    const baseStyle = "flex items-center gap-2 px-3 py-1 text-xs font-medium rounded-md transition-colors";
+    const activeStyle = "bg-slate-200 hover:bg-slate-300 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-600 dark:text-slate-300";
+    const savedStyle = "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 cursor-default";
+
+    return (
+        <button
+            onClick={onClick}
+            disabled={isSaved}
+            className={`${baseStyle} ${isSaved ? savedStyle : activeStyle}`}
+        >
+            {isSaved ? (
+                <>
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor">
+                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    </svg>
+                    {t('output.saved')}
+                </>
+            ) : (
+                <>
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.5 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0 1 11.186 0Z" />
+                    </svg>
+                    {t('output.save')}
+                </>
+            )}
+        </button>
+    );
+};
+
 
 const CopyButton: React.FC<{ textToCopy: string }> = ({ textToCopy }) => {
     const [copied, setCopied] = useState(false);
