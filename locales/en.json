@@ -49,7 +49,21 @@
         "customHashtags": "Custom Hashtags (Optional)",
         "customHashtagsHint": "Add your own brand or campaign hashtags, separated by spaces.",
         "uploadImage": "Upload Image",
-        "removeImage": "Remove"
+        "removeImage": "Remove",
+        "platformSettings": {
+            "characterLimit": "Character Limit Override",
+            "tone": "Tone of Voice",
+            "maxVideoLength": "Max Video Length",
+            "units": {
+                "seconds": "seconds"
+            },
+            "linkedinTones": {
+                "Professional": "Professional",
+                "Casual": "Casual",
+                "Authoritative": "Authoritative",
+                "Friendly": "Friendly"
+            }
+        }
     },
     "output": {
         "title": "Generated Content",

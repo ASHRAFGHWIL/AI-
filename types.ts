@@ -7,6 +7,23 @@ export interface Platform {
   wordCount?: { min: number; max: number };
   characterLimit?: number;
   allows_links?: boolean;
+  settings?: PlatformSetting[];
+}
+
+export type PlatformSetting = {
+  id: keyof PlatformSpecificSettings;
+  label: string;
+  type: 'number' | 'select';
+  placeholder?: string;
+  defaultValue?: string | number;
+  unit?: string;
+  options?: string[];
+}
+
+export interface PlatformSpecificSettings {
+  maxVideoLength?: number;
+  characterLimit?: number;
+  tone?: string;
 }
 
 export interface MarketingInput {
@@ -18,6 +35,7 @@ export interface MarketingInput {
   product_link?: string;
   custom_hashtags?: string;
   platform_images?: { [platformName: string]: string };
+  platform_settings?: { [platformName: string]: PlatformSpecificSettings };
 }
 
 export interface GroundingSource {

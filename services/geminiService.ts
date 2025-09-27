@@ -16,6 +16,7 @@ Your Task:
 3. Adapt the content format automatically to fit each chosen platform.
 4. For each platform selected by the user, generate 3-5 variations.
 5. If images are provided for specific platforms, analyze them and generate content that is highly relevant to the provided visuals.
+6. Adhere to any platform-specific settings provided in the input, such as tone for LinkedIn or character limits for X.
 
 Content for each variation MUST include:
 - A strong hook at the beginning.
@@ -42,6 +43,16 @@ export const generateSocialPosts = async (input: MarketingInput): Promise<Market
       );
   } else {
     delete inputForPrompt.platform_images;
+  }
+
+  // Clean up empty platform_settings
+  if (inputForPrompt.platform_settings) {
+    inputForPrompt.platform_settings = Object.fromEntries(
+        Object.entries(inputForPrompt.platform_settings).filter(([, settings]) => Object.values(settings).some(v => v !== null && v !== undefined && v !== ''))
+    );
+    if (Object.keys(inputForPrompt.platform_settings).length === 0) {
+        delete inputForPrompt.platform_settings;
+    }
   }
 
   const fullPrompt = `${PROMPT_INSTRUCTIONS}\n\nUser Input:\n${JSON.stringify(inputForPrompt, null, 2)}`;

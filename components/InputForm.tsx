@@ -1,4 +1,5 @@
 
+
 import React, { useState, useMemo } from 'react';
 import type { MarketingInput } from '../types';
 import { PLATFORMS, CTA_STYLES, CONTENT_STYLES, TARGET_AUDIENCES } from '../constants';
@@ -27,11 +28,13 @@ const InputForm: React.FC<InputFormProps> = ({ initialData, onSubmit, isLoading 
         : prev.platforms.filter(p => p !== value);
       
       const newImages = { ...prev.platform_images };
+      const newSettings = { ...prev.platform_settings };
       if (!checked) {
           delete newImages[value];
+          delete newSettings[value];
       }
 
-      return { ...prev, platforms, platform_images: newImages };
+      return { ...prev, platforms, platform_images: newImages, platform_settings: newSettings };
     });
   };
   
@@ -61,6 +64,19 @@ const InputForm: React.FC<InputFormProps> = ({ initialData, onSubmit, isLoading 
               platform_images: newImages,
           };
       });
+  };
+
+  const handlePlatformSettingChange = (platformName: string, settingId: string, value: string | number) => {
+    setFormData(prev => ({
+        ...prev,
+        platform_settings: {
+            ...prev.platform_settings,
+            [platformName]: {
+                ...prev.platform_settings?.[platformName],
+                [settingId]: value,
+            }
+        }
+    }));
   };
 
 
@@ -125,25 +141,60 @@ const InputForm: React.FC<InputFormProps> = ({ initialData, onSubmit, isLoading 
                           checked={isChecked}
                           onChange={handlePlatformChange}
                       />
-                      {isChecked && supportsImage && (
-                          <div className="mt-3 ms-6">
-                              {imageData ? (
-                                  <div className="flex items-center gap-3">
-                                      <img src={imageData} alt={`${platform.name} preview`} className="w-12 h-12 object-cover rounded-md border-2 border-slate-300 dark:border-slate-600" />
-                                      <button type="button" onClick={() => removeImage(platform.name)} className="text-xs text-red-600 hover:text-red-800 dark:text-red-500 dark:hover:text-red-400 font-medium">{t('inputForm.removeImage')}</button>
-                                  </div>
-                              ) : (
-                                  <label className="cursor-pointer">
-                                      <div className="flex items-center justify-center w-full px-3 py-2 text-xs border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-md text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700/50 transition-colors">
-                                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 me-2">
-                                              <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5" />
-                                          </svg>
-                                          {t('inputForm.uploadImage')}
-                                      </div>
-                                      <input type="file" accept="image/*" className="hidden" onChange={(e) => handleImageChange(e, platform.name)} />
-                                  </label>
-                              )}
-                          </div>
+                      {isChecked && (
+                         <div className="mt-3 ms-6 space-y-4 border-t border-slate-200 dark:border-slate-700/50 pt-4">
+                            {supportsImage && (
+                                <div>
+                                    {imageData ? (
+                                        <div className="flex items-center gap-3">
+                                            <img src={imageData} alt={`${platform.name} preview`} className="w-12 h-12 object-cover rounded-md border-2 border-slate-300 dark:border-slate-600" />
+                                            <button type="button" onClick={() => removeImage(platform.name)} className="text-xs text-red-600 hover:text-red-800 dark:text-red-500 dark:hover:text-red-400 font-medium">{t('inputForm.removeImage')}</button>
+                                        </div>
+                                    ) : (
+                                        <label className="cursor-pointer">
+                                            <div className="flex items-center justify-center w-full px-3 py-2 text-xs border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-md text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700/50 transition-colors">
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 me-2">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5" />
+                                                </svg>
+                                                {t('inputForm.uploadImage')}
+                                            </div>
+                                            <input type="file" accept="image/*" className="hidden" onChange={(e) => handleImageChange(e, platform.name)} />
+                                        </label>
+                                    )}
+                                </div>
+                            )}
+
+                            {platform.settings?.map(setting => (
+                                <div key={setting.id}>
+                                    <label className="block text-xs font-medium text-slate-700 dark:text-slate-400 mb-1">{t(setting.label)}</label>
+                                    {setting.type === 'number' && (
+                                        <div className="relative">
+                                            <input
+                                                type="number"
+                                                placeholder={setting.placeholder}
+                                                // FIX: Corrected property access for platform settings. The previous code was trying to use the 'string' type as a key.
+                                                value={formData.platform_settings?.[platform.name]?.[setting.id] ?? ''}
+                                                onChange={(e) => handlePlatformSettingChange(platform.name, setting.id, e.target.valueAsNumber)}
+                                                className="block w-full text-xs px-2 py-1.5 border border-slate-300 rounded-md shadow-sm placeholder-slate-400 focus:outline-none focus:ring-slate-500 focus:border-slate-500 dark:bg-slate-700 dark:border-slate-600 dark:text-slate-200 dark:placeholder-slate-500 dark:focus:ring-sky-500 dark:focus:border-sky-500"
+                                            />
+                                            {setting.unit && <span className="absolute end-2.5 top-1/2 -translate-y-1/2 text-xs text-slate-400 dark:text-slate-500">{t(`inputForm.platformSettings.units.${setting.unit}`)}</span>}
+                                        </div>
+                                    )}
+                                    {setting.type === 'select' && setting.options && (
+                                        <select
+                                            // FIX: Corrected property access for platform settings. The previous code was trying to use the 'string' type as a key.
+                                            value={formData.platform_settings?.[platform.name]?.[setting.id] ?? setting.defaultValue}
+                                            onChange={(e) => handlePlatformSettingChange(platform.name, setting.id, e.target.value)}
+                                            className="block w-full text-xs px-2 py-1.5 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-slate-500 focus:border-slate-500 dark:bg-slate-700 dark:border-slate-600 dark:text-slate-200 dark:focus:ring-sky-500 dark:focus:border-sky-500"
+                                        >
+                                            {setting.options.map(option => (
+                                                <option key={option} value={option}>{t(`inputForm.platformSettings.linkedinTones.${option}`)}</option>
+                                            ))}
+                                        </select>
+                                    )}
+                                </div>
+                            ))}
+                         </div>
                       )}
                   </div>
               )

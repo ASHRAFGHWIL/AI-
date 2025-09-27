@@ -49,7 +49,21 @@
         "customHashtags": "هاشتاجات مخصصة (اختياري)",
         "customHashtagsHint": "أضف هاشتاجات علامتك التجارية أو حملتك، مفصولة بمسافات.",
         "uploadImage": "رفع صورة",
-        "removeImage": "إزالة"
+        "removeImage": "إزالة",
+        "platformSettings": {
+            "characterLimit": "تجاوز حد الأحرف",
+            "tone": "نبرة الصوت",
+            "maxVideoLength": "أقصى طول للفيديو",
+            "units": {
+                "seconds": "ثواني"
+            },
+            "linkedinTones": {
+                "Professional": "احترافي",
+                "Casual": "غير رسمي",
+                "Authoritative": "موثوق",
+                "Friendly": "ودي"
+            }
+        }
     },
     "output": {
         "title": "المحتوى الذي تم إنشاؤه",
