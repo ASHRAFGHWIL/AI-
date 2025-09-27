@@ -17,6 +17,7 @@ Your Task:
 4. For each platform selected by the user, generate 3-5 variations.
 5. If images are provided for specific platforms, analyze them and generate content that is highly relevant to the provided visuals.
 6. Adhere to any platform-specific settings provided in the input, such as tone for LinkedIn or character limits for X.
+7. Integrate relevant emojis professionally and aesthetically to enhance readability and engagement. The style of emojis should match the platform's tone (e.g., more professional for LinkedIn, more playful for TikTok).
 
 Content for each variation MUST include:
 - A strong hook at the beginning.
