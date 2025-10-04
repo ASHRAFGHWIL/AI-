@@ -1,5 +1,6 @@
 
 
+
 import React, { useState, useMemo } from 'react';
 import type { MarketingInput } from '../types';
 import { PLATFORMS, CTA_STYLES, CONTENT_STYLES, TARGET_AUDIENCES } from '../constants';
@@ -30,42 +31,95 @@ const InputForm: React.FC<InputFormProps> = ({ initialData, onSubmit, isLoading 
         : prev.platforms.filter(p => p !== value);
       
       const newImages = { ...prev.platform_images };
+      const newSelections = { ...prev.platform_image_selection };
       const newSettings = { ...prev.platform_settings };
       if (!checked) {
           delete newImages[value];
+          delete newSelections[value];
           delete newSettings[value];
       }
 
-      return { ...prev, platforms, platform_images: newImages, platform_settings: newSettings };
+      return { ...prev, platforms, platform_images: newImages, platform_image_selection: newSelections, platform_settings: newSettings };
     });
   };
   
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>, platformName: string) => {
-    const file = e.target.files?.[0];
-    if (file) {
-        const reader = new FileReader();
-        reader.onloadend = () => {
-            setFormData(prev => ({
-                ...prev,
-                platform_images: {
-                    ...prev.platform_images,
-                    [platformName]: reader.result as string,
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+
+    const filePromises = Array.from(files).map(file => {
+        // FIX: Add type-safe handling for FileReader result to ensure it's a string.
+        return new Promise<string>((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                if (typeof reader.result === 'string') {
+                    resolve(reader.result);
+                } else {
+                    reject(new Error('File could not be read as a data URL.'));
                 }
-            }));
-        };
-        reader.readAsDataURL(file);
-    }
+            };
+            reader.onerror = reject;
+            reader.readAsDataURL(file);
+        });
+    });
+
+    Promise.all(filePromises).then(dataUrls => {
+        setFormData(prev => ({
+            ...prev,
+            platform_images: {
+                ...prev.platform_images,
+                [platformName]: [
+                    ...(prev.platform_images?.[platformName] ?? []),
+                    ...dataUrls
+                ],
+            }
+        }));
+    }).catch(error => {
+        console.error("Error reading files:", error);
+    });
+    e.target.value = ''; // Allow re-uploading the same file
   };
 
-  const removeImage = (platformName: string) => {
+  const removeImage = (platformName: string, imageIndex: number) => {
       setFormData(prev => {
           const newImages = { ...prev.platform_images };
-          delete newImages[platformName];
+          const platformImages = newImages[platformName] ? [...newImages[platformName]] : [];
+          platformImages.splice(imageIndex, 1);
+
+          const newSelections = { ...prev.platform_image_selection };
+          const currentSelection = newSelections[platformName];
+          
+          if (typeof currentSelection === 'number') {
+              if (currentSelection === imageIndex) {
+                  newSelections[platformName] = 'auto';
+              } else if (currentSelection > imageIndex) {
+                  newSelections[platformName] = currentSelection - 1;
+              }
+          }
+
+          if (platformImages.length === 0) {
+              delete newImages[platformName];
+              delete newSelections[platformName];
+          } else {
+              newImages[platformName] = platformImages;
+          }
+
           return {
               ...prev,
               platform_images: newImages,
+              platform_image_selection: newSelections,
           };
       });
+  };
+
+  const handleImageSelectionChange = (platformName: string, selection: 'auto' | number) => {
+    setFormData(prev => ({
+        ...prev,
+        platform_image_selection: {
+            ...prev.platform_image_selection,
+            [platformName]: selection
+        }
+    }));
   };
 
   const handlePlatformSettingChange = (platformName: string, settingId: string, value: string | number) => {
@@ -135,10 +189,11 @@ const InputForm: React.FC<InputFormProps> = ({ initialData, onSubmit, isLoading 
             {PLATFORMS.map(platform => {
               const isChecked = formData.platforms.includes(platform.name);
               const supportsImage = platform.recommendedImageSize;
-              const imageData = formData.platform_images?.[platform.name];
+              const images = formData.platform_images?.[platform.name] ?? [];
+              const selection = formData.platform_image_selection?.[platform.name] ?? 'auto';
 
               return (
-                  <div key={platform.name} className="bg-slate-100 dark:bg-slate-800/50 p-3 rounded-lg">
+                  <div key={platform.name} className="bg-slate-100 dark:bg-slate-800/50 p-3 rounded-lg flex flex-col">
                       <div className="relative flex items-start">
                           <div className="flex h-6 items-center">
                               <input
@@ -160,24 +215,42 @@ const InputForm: React.FC<InputFormProps> = ({ initialData, onSubmit, isLoading 
                           </div>
                       </div>
                       {isChecked && supportsImage && (
-                         <div className="mt-3 ms-1 space-y-4 border-t border-slate-200 dark:border-slate-700/50 pt-4">
+                         <div className="mt-3 flex-grow flex flex-col space-y-3 border-t border-slate-200 dark:border-slate-700/50 pt-3">
+                            <h4 className="text-xs font-semibold text-slate-600 dark:text-slate-300">{t('inputForm.imageSelection')}</h4>
                             <div>
-                                {imageData ? (
-                                    <div className="flex items-center gap-3">
-                                        <img src={imageData} alt={`${platform.name} preview`} className="w-12 h-12 object-cover rounded-md border-2 border-slate-300 dark:border-slate-600" />
-                                        <button type="button" onClick={() => removeImage(platform.name)} className="text-xs text-red-600 hover:text-red-800 dark:text-red-500 dark:hover:text-red-400 font-medium">{t('inputForm.removeImage')}</button>
+                                <button type="button" onClick={() => handleImageSelectionChange(platform.name, 'auto')} className={`w-full text-xs px-3 py-1.5 rounded-md transition-colors ${selection === 'auto' ? 'bg-sky-600 text-white font-semibold' : 'bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-300 dark:hover:bg-slate-600'}`}>
+                                    {t('inputForm.letAIChoose')}
+                                </button>
+                            </div>
+                            <div className="grid grid-cols-3 sm:grid-cols-4 gap-2 flex-grow content-start">
+                                {images.map((imgSrc, index) => (
+                                    <div key={index} className="relative aspect-square">
+                                        <button
+                                          type="button"
+                                          onClick={() => handleImageSelectionChange(platform.name, index)}
+                                          className={`w-full h-full rounded-md overflow-hidden focus:outline-none ring-offset-2 dark:ring-offset-slate-800/50 focus:ring-2 ${selection === index ? 'ring-2 ring-sky-500' : 'ring-1 ring-slate-300 dark:ring-slate-600 hover:ring-slate-400 dark:hover:ring-slate-500'}`}
+                                        >
+                                            <img src={imgSrc} alt={`upload preview ${index+1}`} className="w-full h-full object-cover" />
+                                            {selection === index && (
+                                                <div className="absolute inset-0 bg-sky-500/50 flex items-center justify-center">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-white" viewBox="0 0 20 20" fill="currentColor">
+                                                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                                                    </svg>
+                                                </div>
+                                            )}
+                                        </button>
+                                        <button type="button" onClick={() => removeImage(platform.name, index)} className="absolute -top-1.5 -end-1.5 w-5 h-5 bg-red-600 text-white rounded-full flex items-center justify-center text-xs font-bold hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 ring-offset-1 dark:ring-offset-slate-800/50" aria-label={t('inputForm.removeImage')}>
+                                            &times;
+                                        </button>
                                     </div>
-                                ) : (
-                                    <label className="cursor-pointer">
-                                        <div className="flex items-center justify-center w-full px-3 py-2 text-xs border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-md text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700/50 transition-colors">
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 me-2">
-                                                <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5" />
-                                            </svg>
-                                            {t('inputForm.uploadImage')}
-                                        </div>
-                                        <input type="file" accept="image/*" className="hidden" onChange={(e) => handleImageChange(e, platform.name)} />
-                                    </label>
-                                )}
+                                ))}
+                                <label className="cursor-pointer aspect-square flex items-center justify-center w-full h-full border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-md text-slate-400 dark:text-slate-500 hover:bg-slate-200 dark:hover:bg-slate-700/50 hover:border-slate-400 dark:hover:border-slate-500 transition-colors">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                                    </svg>
+                                    <span className="sr-only">{t('inputForm.addImage')}</span>
+                                    <input type="file" accept="image/*" multiple className="hidden" onChange={(e) => handleImageChange(e, platform.name)} />
+                                </label>
                             </div>
                          </div>
                       )}

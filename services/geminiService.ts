@@ -1,4 +1,5 @@
 
+
 import { GoogleGenAI } from "@google/genai";
 import type { MarketingInput, MarketingOutput, GroundingSource } from '../types';
 
@@ -16,7 +17,7 @@ Your Task:
 2. Generate SEO-friendly content using these keywords naturally.
 3. Adapt the content format automatically to fit each chosen platform.
 4. For each platform selected by the user, generate 3-5 variations.
-5. If images are provided for specific platforms, analyze them and generate content that is highly relevant to the provided visuals.
+5. If images are provided for specific platforms, analyze them and generate content that is highly relevant to the provided visuals. If multiple image options are provided for a platform, choose the most compelling one and create the post based on it.
 6. Adhere to any platform-specific settings provided in the input, such as tone for LinkedIn or character limits for X.
 7. Integrate relevant emojis professionally and aesthetically to enhance readability and engagement. The style of emojis should match the platform's tone (e.g., more professional for LinkedIn, more playful for TikTok).
 
@@ -38,32 +39,47 @@ Output Format Rules:
 export const generateSocialPosts = async (input: MarketingInput): Promise<MarketingOutput> => {
   const model = 'gemini-2.5-flash';
   
-  const inputForPrompt = { ...input };
+  // FIX: Use a more flexible type for the prompt data object to allow modification.
+  const inputForPrompt: { [key: string]: any } = { ...input };
   const parts: any[] = [];
 
   // Create interleaved text/image parts to give the model clear context
-  // for which image belongs to which platform.
   if (input.platform_images && Object.keys(input.platform_images).length > 0) {
-      inputForPrompt.platform_images = Object.fromEntries(
-          Object.keys(input.platform_images).map(key => [key, 'Image Attached'])
-      );
+      const imageStatusSummary: { [key: string]: string } = {};
 
-      for (const [platformName, dataUrl] of Object.entries(input.platform_images)) {
-          const [meta, base64Data] = (dataUrl || '').split(',');
-          if (base64Data) {
-              const mimeType = meta.match(/:(.*?);/)?.[1] || 'image/jpeg';
-              parts.push({ text: `This is the image provided for the ${platformName} platform:` });
-              parts.push({
-                  inlineData: {
-                      mimeType,
-                      data: base64Data,
-                  },
+      for (const [platformName, images] of Object.entries(input.platform_images)) {
+          if (!images || images.length === 0) continue;
+
+          const selection = input.platform_image_selection?.[platformName] ?? 'auto';
+
+          if (selection === 'auto') {
+              imageStatusSummary[platformName] = `${images.length} image(s) attached for AI selection.`;
+              parts.push({ text: `For the ${platformName} platform, multiple images have been provided. Please choose the most suitable one to base the content on:` });
+              images.forEach(dataUrl => {
+                  const [meta, base64Data] = (dataUrl || '').split(',');
+                  if (base64Data) {
+                      const mimeType = meta.match(/:(.*?);/)?.[1] || 'image/jpeg';
+                      parts.push({ inlineData: { mimeType, data: base64Data } });
+                  }
               });
+          } else if (typeof selection === 'number' && images[selection]) {
+              imageStatusSummary[platformName] = `1 specific image selected out of ${images.length}.`;
+              const dataUrl = images[selection];
+              const [meta, base64Data] = (dataUrl || '').split(',');
+              if (base64Data) {
+                  const mimeType = meta.match(/:(.*?);/)?.[1] || 'image/jpeg';
+                  parts.push({ text: `This is the selected image for the ${platformName} platform:` });
+                  parts.push({ inlineData: { mimeType, data: base64Data } });
+              }
           }
       }
+      inputForPrompt.platform_images = imageStatusSummary;
   } else {
     delete inputForPrompt.platform_images;
   }
+  // This field is for UI state, not for the model
+  delete inputForPrompt.platform_image_selection;
+
 
   // Clean up empty platform_settings
   if (inputForPrompt.platform_settings) {

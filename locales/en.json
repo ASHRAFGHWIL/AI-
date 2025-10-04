@@ -49,8 +49,11 @@
         "productLinkHint": "A link will be included for platforms that support it.",
         "customHashtags": "Custom Hashtags (Optional)",
         "customHashtagsHint": "Add your own brand or campaign hashtags, separated by spaces.",
-        "uploadImage": "Upload Image",
+        "uploadImages": "Upload Image(s)",
         "removeImage": "Remove",
+        "addImage": "Add Image",
+        "letAIChoose": "Let AI Choose Best Image",
+        "imageSelection": "Image Selection",
         "platformSettings": {
             "characterLimit": "Character Limit Override",
             "tone": "Tone of Voice",

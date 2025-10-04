@@ -49,8 +49,11 @@
         "productLinkHint": "سيتم تضمين الرابط للمنصات التي تدعمه.",
         "customHashtags": "هاشتاجات مخصصة (اختياري)",
         "customHashtagsHint": "أضف هاشتاجات علامتك التجارية أو حملتك، مفصولة بمسافات.",
-        "uploadImage": "رفع صورة",
+        "uploadImages": "رفع صورة (صور)",
         "removeImage": "إزالة",
+        "addImage": "إضافة صورة",
+        "letAIChoose": "دع الذكاء الاصطناعي يختار",
+        "imageSelection": "اختيار الصورة",
         "platformSettings": {
             "characterLimit": "تجاوز حد الأحرف",
             "tone": "نبرة الصوت",

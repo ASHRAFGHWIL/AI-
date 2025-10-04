@@ -34,7 +34,8 @@ export interface MarketingInput {
   platforms: string[];
   product_link?: string;
   custom_hashtags?: string;
-  platform_images?: { [platformName: string]: string };
+  platform_images?: { [platformName: string]: string[] };
+  platform_image_selection?: { [platformName: string]: 'auto' | number };
   platform_settings?: { [platformName: string]: PlatformSpecificSettings };
 }
 

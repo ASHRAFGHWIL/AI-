@@ -67,5 +67,6 @@ export const INITIAL_FORM_DATA: MarketingInput = {
   product_link: "",
   custom_hashtags: "",
   platform_images: {},
+  platform_image_selection: {},
   platform_settings: {},
 };
