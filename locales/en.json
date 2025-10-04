@@ -73,7 +73,10 @@
         "title": "Generated Content",
         "sourcesTitle": "Sources",
         "noPlatforms": "No platforms were selected or generated.",
-        "copyAll": "Copy All",
+        "copy": "Copy",
+        "copyMarkdown": "Copy Markdown",
+        "copyPlainText": "Copy Text",
+        "copyToClipboard": "Copy to clipboard",
         "copied": "Copied!",
         "save": "Save",
         "saved": "Saved"

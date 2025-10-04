@@ -1,6 +1,8 @@
 
 
 
+
+
 import React, { useState, useMemo } from 'react';
 import type { MarketingInput } from '../types';
 import { PLATFORMS, CTA_STYLES, CONTENT_STYLES, TARGET_AUDIENCES } from '../constants';
@@ -47,7 +49,8 @@ const InputForm: React.FC<InputFormProps> = ({ initialData, onSubmit, isLoading 
     const files = e.target.files;
     if (!files || files.length === 0) return;
 
-    const filePromises = Array.from(files).map(file => {
+    // FIX: Explicitly type `file` as `File` to resolve type inference issue.
+    const filePromises = Array.from(files).map((file: File) => {
         // FIX: Add type-safe handling for FileReader result to ensure it's a string.
         return new Promise<string>((resolve, reject) => {
             const reader = new FileReader();

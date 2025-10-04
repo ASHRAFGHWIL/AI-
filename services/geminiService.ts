@@ -1,5 +1,6 @@
 
 
+
 import { GoogleGenAI } from "@google/genai";
 import type { MarketingInput, MarketingOutput, GroundingSource } from '../types';
 
@@ -104,7 +105,8 @@ export const generateSocialPosts = async (input: MarketingInput): Promise<Market
         },
     });
 
-    const responseText = response?.text?.trim() ?? '';
+    // FIX: Access the `text` property directly as per Gemini API guidelines. The response object is guaranteed to exist on success.
+    const responseText = response.text.trim();
     
     const rawSources = response.candidates?.[0]?.groundingMetadata?.groundingChunks ?? [];
     const sources: GroundingSource[] = rawSources

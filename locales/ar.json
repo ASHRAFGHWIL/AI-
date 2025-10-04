@@ -73,7 +73,10 @@
         "title": "المحتوى الذي تم إنشاؤه",
         "sourcesTitle": "المصادر",
         "noPlatforms": "لم يتم اختيار أو إنشاء أي منصات.",
-        "copyAll": "نسخ الكل",
+        "copy": "نسخ",
+        "copyMarkdown": "نسخ التنسيق",
+        "copyPlainText": "نسخ النص",
+        "copyToClipboard": "نسخ إلى الحافظة",
         "copied": "تم النسخ!",
         "save": "حفظ",
         "saved": "تم الحفظ"
