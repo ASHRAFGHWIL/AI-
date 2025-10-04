@@ -51,4 +51,5 @@ export interface MarketingOutput {
 
 export interface SavedMarketingOutput extends MarketingOutput {
     savedAt: string;
+    platforms: string[];
 }

@@ -16,6 +16,7 @@ const App: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [output, setOutput] = useState<MarketingOutput | null>(null);
   const [savedPosts, setSavedPosts] = useState<SavedMarketingOutput[]>([]);
+  const [lastFormData, setLastFormData] = useState<MarketingInput | null>(null);
   const { t, locale } = useI18n();
 
   useEffect(() => {
@@ -49,6 +50,7 @@ const App: React.FC = () => {
     setIsLoading(true);
     setError(null);
     setOutput(null);
+    setLastFormData(formData);
 
     try {
       const result = await generateSocialPosts(formData);
@@ -65,9 +67,10 @@ const App: React.FC = () => {
     const newSavedPost: SavedMarketingOutput = {
       ...postToSave,
       savedAt: new Date().toISOString(),
+      platforms: lastFormData?.platforms ?? [],
     };
     setSavedPosts(prev => [newSavedPost, ...prev]);
-  }, []);
+  }, [lastFormData]);
 
   const handleDeletePost = useCallback((postId: string) => {
       if (window.confirm(t('savedPosts.deleteConfirmation'))) {

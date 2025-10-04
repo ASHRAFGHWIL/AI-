@@ -4,6 +4,8 @@ import React, { useState, useMemo } from 'react';
 import type { MarketingInput } from '../types';
 import { PLATFORMS, CTA_STYLES, CONTENT_STYLES, TARGET_AUDIENCES } from '../constants';
 import { useI18n } from '../hooks/useI18n';
+import SocialIcon from './SocialIcon';
+import PlatformSettingsAccordion from './PlatformSettingsAccordion';
 
 interface InputFormProps {
   initialData: MarketingInput;
@@ -91,6 +93,10 @@ const InputForm: React.FC<InputFormProps> = ({ initialData, onSubmit, isLoading 
         return platform?.allows_links;
     });
   }, [formData.platforms]);
+  
+  const selectedPlatformsWithSettings = useMemo(() => {
+    return PLATFORMS.filter(p => formData.platforms.includes(p.name) && p.settings && p.settings.length > 0);
+  }, [formData.platforms]);
 
 
   return (
@@ -133,67 +139,46 @@ const InputForm: React.FC<InputFormProps> = ({ initialData, onSubmit, isLoading 
 
               return (
                   <div key={platform.name} className="bg-slate-100 dark:bg-slate-800/50 p-3 rounded-lg">
-                      <Checkbox
-                          label={platform.name}
-                          description={platform.guideline}
-                          name="platform"
-                          value={platform.name}
-                          checked={isChecked}
-                          onChange={handlePlatformChange}
-                      />
-                      {isChecked && (
-                         <div className="mt-3 ms-6 space-y-4 border-t border-slate-200 dark:border-slate-700/50 pt-4">
-                            {supportsImage && (
-                                <div>
-                                    {imageData ? (
-                                        <div className="flex items-center gap-3">
-                                            <img src={imageData} alt={`${platform.name} preview`} className="w-12 h-12 object-cover rounded-md border-2 border-slate-300 dark:border-slate-600" />
-                                            <button type="button" onClick={() => removeImage(platform.name)} className="text-xs text-red-600 hover:text-red-800 dark:text-red-500 dark:hover:text-red-400 font-medium">{t('inputForm.removeImage')}</button>
+                      <div className="relative flex items-start">
+                          <div className="flex h-6 items-center">
+                              <input
+                                id={`platform-${platform.name}`}
+                                name="platform"
+                                value={platform.name}
+                                checked={isChecked}
+                                onChange={handlePlatformChange}
+                                type="checkbox"
+                                className="h-4 w-4 rounded border-slate-300 text-sky-600 focus:ring-sky-600 dark:bg-slate-700 dark:border-slate-600 dark:focus:ring-sky-600 dark:focus:ring-offset-slate-900"
+                              />
+                          </div>
+                          <div className="ms-3 text-sm leading-6">
+                              <label htmlFor={`platform-${platform.name}`} className="font-medium text-slate-900 dark:text-slate-200 flex items-center gap-2 cursor-pointer">
+                                  <span className="text-slate-500 dark:text-slate-400"><SocialIcon platform={platform.name} /></span>
+                                  {platform.name}
+                              </label>
+                              <p className="text-slate-500 dark:text-slate-400 text-xs">{platform.guideline}</p>
+                          </div>
+                      </div>
+                      {isChecked && supportsImage && (
+                         <div className="mt-3 ms-1 space-y-4 border-t border-slate-200 dark:border-slate-700/50 pt-4">
+                            <div>
+                                {imageData ? (
+                                    <div className="flex items-center gap-3">
+                                        <img src={imageData} alt={`${platform.name} preview`} className="w-12 h-12 object-cover rounded-md border-2 border-slate-300 dark:border-slate-600" />
+                                        <button type="button" onClick={() => removeImage(platform.name)} className="text-xs text-red-600 hover:text-red-800 dark:text-red-500 dark:hover:text-red-400 font-medium">{t('inputForm.removeImage')}</button>
+                                    </div>
+                                ) : (
+                                    <label className="cursor-pointer">
+                                        <div className="flex items-center justify-center w-full px-3 py-2 text-xs border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-md text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700/50 transition-colors">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 me-2">
+                                                <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5" />
+                                            </svg>
+                                            {t('inputForm.uploadImage')}
                                         </div>
-                                    ) : (
-                                        <label className="cursor-pointer">
-                                            <div className="flex items-center justify-center w-full px-3 py-2 text-xs border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-md text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700/50 transition-colors">
-                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 me-2">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5" />
-                                                </svg>
-                                                {t('inputForm.uploadImage')}
-                                            </div>
-                                            <input type="file" accept="image/*" className="hidden" onChange={(e) => handleImageChange(e, platform.name)} />
-                                        </label>
-                                    )}
-                                </div>
-                            )}
-
-                            {platform.settings?.map(setting => (
-                                <div key={setting.id}>
-                                    <label className="block text-xs font-medium text-slate-700 dark:text-slate-400 mb-1">{t(setting.label)}</label>
-                                    {setting.type === 'number' && (
-                                        <div className="relative">
-                                            <input
-                                                type="number"
-                                                placeholder={setting.placeholder}
-                                                // FIX: Corrected property access for platform settings. The previous code was trying to use the 'string' type as a key.
-                                                value={formData.platform_settings?.[platform.name]?.[setting.id] ?? ''}
-                                                onChange={(e) => handlePlatformSettingChange(platform.name, setting.id, e.target.valueAsNumber)}
-                                                className="block w-full text-xs px-2 py-1.5 border border-slate-300 rounded-md shadow-sm placeholder-slate-400 focus:outline-none focus:ring-slate-500 focus:border-slate-500 dark:bg-slate-700 dark:border-slate-600 dark:text-slate-200 dark:placeholder-slate-500 dark:focus:ring-sky-500 dark:focus:border-sky-500"
-                                            />
-                                            {setting.unit && <span className="absolute end-2.5 top-1/2 -translate-y-1/2 text-xs text-slate-400 dark:text-slate-500">{t(`inputForm.platformSettings.units.${setting.unit}`)}</span>}
-                                        </div>
-                                    )}
-                                    {setting.type === 'select' && setting.options && (
-                                        <select
-                                            // FIX: Corrected property access for platform settings. The previous code was trying to use the 'string' type as a key.
-                                            value={formData.platform_settings?.[platform.name]?.[setting.id] ?? setting.defaultValue}
-                                            onChange={(e) => handlePlatformSettingChange(platform.name, setting.id, e.target.value)}
-                                            className="block w-full text-xs px-2 py-1.5 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-slate-500 focus:border-slate-500 dark:bg-slate-700 dark:border-slate-600 dark:text-slate-200 dark:focus:ring-sky-500 dark:focus:border-sky-500"
-                                        >
-                                            {setting.options.map(option => (
-                                                <option key={option} value={option}>{t(`inputForm.platformSettings.linkedinTones.${option}`)}</option>
-                                            ))}
-                                        </select>
-                                    )}
-                                </div>
-                            ))}
+                                        <input type="file" accept="image/*" className="hidden" onChange={(e) => handleImageChange(e, platform.name)} />
+                                    </label>
+                                )}
+                            </div>
                          </div>
                       )}
                   </div>
@@ -201,6 +186,16 @@ const InputForm: React.FC<InputFormProps> = ({ initialData, onSubmit, isLoading 
             })}
         </div>
       </Fieldset>
+      
+      {selectedPlatformsWithSettings.length > 0 && (
+          <Fieldset legend={t('inputForm.platformCustomizations')}>
+              <PlatformSettingsAccordion
+                platforms={selectedPlatformsWithSettings}
+                formData={formData}
+                onSettingChange={handlePlatformSettingChange}
+              />
+          </Fieldset>
+      )}
       
       <button type="submit" disabled={isLoading} className="w-full flex justify-center items-center gap-x-2 bg-slate-800 text-white font-bold py-3 px-4 rounded-lg hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 disabled:bg-slate-400 disabled:cursor-not-allowed transition-colors duration-200 dark:bg-sky-600 dark:hover:bg-sky-500 dark:focus:ring-sky-500 dark:disabled:bg-slate-700 dark:disabled:text-slate-400">
         {isLoading ? (
@@ -238,17 +233,5 @@ const Select: React.FC<React.SelectHTMLAttributes<HTMLSelectElement> & { label: 
         </select>
     </div>
 );
-
-
-const Checkbox: React.FC<React.InputHTMLAttributes<HTMLInputElement> & { label: string, description?: string }> = ({ label, description, ...props }) => (
-    <div>
-        <div className="flex items-center">
-            <input {...props} type="checkbox" className="h-4 w-4 text-sky-600 border-slate-300 rounded focus:ring-sky-500 dark:bg-slate-700 dark:border-slate-600 dark:focus:ring-sky-600 dark:focus:ring-offset-slate-900 dark:checked:bg-sky-500" />
-            <label className="ms-2 block text-sm font-medium text-slate-900 dark:text-slate-200">{label}</label>
-        </div>
-        {description && <p className="ms-6 text-xs text-slate-500 dark:text-slate-400">{description}</p>}
-    </div>
-);
-
 
 export default InputForm;

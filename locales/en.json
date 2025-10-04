@@ -44,6 +44,7 @@
             "Community": "Community-building (e.g., Join the conversation)"
         },
         "platforms": "Platforms",
+        "platformCustomizations": "Platform Customizations",
         "productLink": "Product Link (Optional)",
         "productLinkHint": "A link will be included for platforms that support it.",
         "customHashtags": "Custom Hashtags (Optional)",

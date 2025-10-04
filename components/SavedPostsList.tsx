@@ -1,6 +1,7 @@
 import React from 'react';
 import type { SavedMarketingOutput } from '../types';
 import { useI18n } from '../hooks/useI18n';
+import SocialIcon from './SocialIcon';
 
 interface SavedPostsListProps {
   posts: SavedMarketingOutput[];
@@ -34,7 +35,14 @@ const SavedPostsList: React.FC<SavedPostsListProps> = ({ posts, onDelete, onView
           {posts.map(post => (
             <div key={post.id} className="bg-white dark:bg-slate-800 rounded-lg shadow-md border border-slate-200 dark:border-slate-700 flex flex-col p-5">
               <div className="flex-grow mb-4">
-                <p className="text-xs text-slate-500 dark:text-slate-400 mb-2">{formatDate(post.savedAt)}</p>
+                <div className="flex justify-between items-start mb-2">
+                    <p className="text-xs text-slate-500 dark:text-slate-400">{formatDate(post.savedAt)}</p>
+                    {post.platforms && post.platforms.length > 0 && (
+                        <div className="flex items-center gap-2 text-slate-400 dark:text-slate-500">
+                            {post.platforms.map(p => <SocialIcon key={p} platform={p} className="w-4 h-4" />)}
+                        </div>
+                    )}
+                </div>
                 <p className="text-sm text-slate-700 dark:text-slate-300 line-clamp-4">
                   {post.content.replace(/##|###|\*\*/g, '').split('\n').find(line => line.trim() !== '')}
                 </p>

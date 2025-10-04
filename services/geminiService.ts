@@ -1,3 +1,4 @@
+
 import { GoogleGenAI } from "@google/genai";
 import type { MarketingInput, MarketingOutput, GroundingSource } from '../types';
 
@@ -38,10 +39,28 @@ export const generateSocialPosts = async (input: MarketingInput): Promise<Market
   const model = 'gemini-2.5-flash';
   
   const inputForPrompt = { ...input };
-  if (inputForPrompt.platform_images && Object.keys(inputForPrompt.platform_images).length > 0) {
+  const parts: any[] = [];
+
+  // Create interleaved text/image parts to give the model clear context
+  // for which image belongs to which platform.
+  if (input.platform_images && Object.keys(input.platform_images).length > 0) {
       inputForPrompt.platform_images = Object.fromEntries(
-          Object.keys(inputForPrompt.platform_images).map(key => [key, 'Image Attached'])
+          Object.keys(input.platform_images).map(key => [key, 'Image Attached'])
       );
+
+      for (const [platformName, dataUrl] of Object.entries(input.platform_images)) {
+          const [meta, base64Data] = (dataUrl || '').split(',');
+          if (base64Data) {
+              const mimeType = meta.match(/:(.*?);/)?.[1] || 'image/jpeg';
+              parts.push({ text: `This is the image provided for the ${platformName} platform:` });
+              parts.push({
+                  inlineData: {
+                      mimeType,
+                      data: base64Data,
+                  },
+              });
+          }
+      }
   } else {
     delete inputForPrompt.platform_images;
   }
@@ -57,25 +76,9 @@ export const generateSocialPosts = async (input: MarketingInput): Promise<Market
   }
 
   const fullPrompt = `${PROMPT_INSTRUCTIONS}\n\nUser Input:\n${JSON.stringify(inputForPrompt, null, 2)}`;
+  parts.push({ text: fullPrompt });
 
   try {
-    const textPart = { text: fullPrompt };
-
-    const imageParts = Object.values(input.platform_images || {}).map(dataUrl => {
-        const [meta, base64Data] = (dataUrl || '').split(',');
-        if (!base64Data) return null;
-        
-        const mimeType = meta.match(/:(.*?);/)?.[1] || 'image/jpeg';
-        return {
-            inlineData: {
-                mimeType,
-                data: base64Data,
-            },
-        };
-    }).filter((p): p is { inlineData: { mimeType: string; data: string } } => p !== null);
-
-    const parts = [textPart, ...imageParts];
-
     const response = await ai.models.generateContent({
         model: model,
         contents: { parts: parts },

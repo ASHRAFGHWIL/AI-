@@ -44,6 +44,7 @@
             "Community": "بناء المجتمع (مثال: انضم إلى النقاش)"
         },
         "platforms": "المنصات",
+        "platformCustomizations": "تخصيصات المنصة",
         "productLink": "رابط المنتج (اختياري)",
         "productLinkHint": "سيتم تضمين الرابط للمنصات التي تدعمه.",
         "customHashtags": "هاشتاجات مخصصة (اختياري)",
