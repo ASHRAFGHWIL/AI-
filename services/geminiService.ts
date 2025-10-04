@@ -1,6 +1,4 @@
 
-
-
 import { GoogleGenAI } from "@google/genai";
 import type { MarketingInput, MarketingOutput, GroundingSource } from '../types';
 
@@ -21,6 +19,7 @@ Your Task:
 5. If images are provided for specific platforms, analyze them and generate content that is highly relevant to the provided visuals. If multiple image options are provided for a platform, choose the most compelling one and create the post based on it.
 6. Adhere to any platform-specific settings provided in the input, such as tone for LinkedIn or character limits for X.
 7. Integrate relevant emojis professionally and aesthetically to enhance readability and engagement. The style of emojis should match the platform's tone (e.g., more professional for LinkedIn, more playful for TikTok).
+8. Crucially, start each main paragraph (Hook, Body, CTA) with a single, eloquent, and contextually relevant emoji. This emoji should act as a visual cue for the paragraph's content.
 
 Content for each variation MUST include:
 - A strong hook at the beginning.
@@ -33,6 +32,7 @@ Output Format Rules:
 - Start with a top-level heading for each platform (e.g., '## Instagram').
 - Use a sub-heading for each variation (e.g., '### Variation 1').
 - Use bold markdown for labels (e.g., '**Hook:**', '**Body:**', '**CTA:**', '**Hashtags:**').
+- The emoji for each section should be placed immediately after the bolded label and a space. Example: '**Hook:** ✨ Discover the secret to...'
 - DO NOT output JSON.
 `;
 
