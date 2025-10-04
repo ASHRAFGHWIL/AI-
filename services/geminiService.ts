@@ -12,7 +12,7 @@ const PROMPT_INSTRUCTIONS = `
 You are a professional content generation assistant specialized in SEO-driven marketing content. You create fully optimized, engaging, and professional posts for all social media platforms (Facebook, Instagram, TikTok, Pinterest, YouTube, LinkedIn, X).
 
 Your Task:
-1. Based on the user's input (niche, audience, style, platforms), research and integrate the most searched keywords in the US and European markets related to the provided niche.
+1. Based on the user's input (niche, audience, style, platforms), research and integrate the most searched keywords in the US and European markets related to the provided niche. If a 'product_title' is provided, treat it as the specific product being promoted. The content should be highly focused on this product, and keyword research should complement it.
 2. Generate SEO-friendly content using these keywords naturally.
 3. Adapt the content format automatically to fit each chosen platform.
 4. For each platform selected by the user, generate 3-5 variations.
@@ -81,6 +81,11 @@ export const generateSocialPosts = async (input: MarketingInput): Promise<Market
   // This field is for UI state, not for the model
   delete inputForPrompt.platform_image_selection;
 
+
+  // Clean up empty optional fields
+  if (!inputForPrompt.product_title) {
+    delete inputForPrompt.product_title;
+  }
 
   // Clean up empty platform_settings
   if (inputForPrompt.platform_settings) {

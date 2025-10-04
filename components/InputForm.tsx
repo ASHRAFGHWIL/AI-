@@ -3,6 +3,7 @@
 
 
 
+
 import React, { useState, useMemo } from 'react';
 import type { MarketingInput } from '../types';
 import { PLATFORMS, CTA_STYLES, CONTENT_STYLES, TARGET_AUDIENCES } from '../constants';
@@ -160,6 +161,10 @@ const InputForm: React.FC<InputFormProps> = ({ initialData, onSubmit, isLoading 
     <form onSubmit={handleSubmit} className="space-y-8">
       <Fieldset legend={t('inputForm.coreDetails')}>
         <Input label={t('inputForm.niche')} name="niche" value={formData.niche} onChange={handleChange} placeholder="e.g., eco-friendly wooden lamps" />
+        <div>
+            <Input label={t('inputForm.productTitle')} name="product_title" value={formData.product_title || ''} onChange={handleChange} placeholder="e.g., Handcrafted Oak Bookshelf" />
+            <p className="text-xs text-slate-500 dark:text-slate-400 mt-1.5 px-1">{t('inputForm.productTitleHint')}</p>
+        </div>
         <Select label={t('inputForm.audience')} name="audience" value={formData.audience} onChange={handleChange}>
             {TARGET_AUDIENCES.map(audience => (
               <option key={audience} value={audience}>{t(`inputForm.targetAudiences.${audience}`)}</option>

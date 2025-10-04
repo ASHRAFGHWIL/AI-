@@ -28,6 +28,7 @@ export interface PlatformSpecificSettings {
 
 export interface MarketingInput {
   niche: string;
+  product_title?: string;
   audience: string;
   style: string;
   cta_style: string;

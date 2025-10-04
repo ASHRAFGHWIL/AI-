@@ -18,6 +18,8 @@
     "inputForm": {
         "coreDetails": "Content Brief",
         "niche": "Business Niche / Topic",
+        "productTitle": "Etsy Listing Title (Optional)",
+        "productTitleHint": "Provide the exact title of your product listing for more specific content.",
         "audience": "Target Audience",
         "targetAudiences": {
             "US": "US",

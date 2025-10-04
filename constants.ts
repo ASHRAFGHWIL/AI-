@@ -60,6 +60,7 @@ export const CTA_STYLES = [
 
 export const INITIAL_FORM_DATA: MarketingInput = {
   niche: "eco-friendly wooden lamps",
+  product_title: "",
   audience: TARGET_AUDIENCES[0],
   style: CONTENT_STYLES[0],
   cta_style: CTA_STYLES[0],
